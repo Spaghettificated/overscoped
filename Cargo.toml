@@ -1,0 +1,12 @@
+[package]
+name = "overscoped"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+avian = "0.0.0"
+bevy = { version = "0.17.1", features = ["dynamic_linking"] }
+bevy-inspector-egui = "0.35.0"
+bevy_camera = "0.17.1"
+bevy_common_assets = {version = "0.14.0", features = ["json"]}
+serde = "1.0.228"

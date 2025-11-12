@@ -108,14 +108,33 @@ impl NodeStyleCollection {
     }
 }
 
+#[derive(Component)]
+pub struct ScreenUI;
 
 pub fn ui_plugin(app: &mut App){
     let mut styles = NodeStyleCollection::new();
     styles.init(Node::default());
     // app.insert_resource(test_style);
     // app.init_asset(test_style);
+    app.add_systems(Startup, setup_ui);
     app.add_systems(Update, (button_dynamics::<BorderColor>, button_dynamics::<BorderRadius>, button_dynamics::<BackgroundColor>, button_dynamics::<UiTransform>));
     app.add_systems(Update, (button_children_dynamics::<TextColor>, button_children_dynamics::<BorderRadius>, button_children_dynamics::<BackgroundColor>));
+}
+
+fn setup_ui(
+    mut commands: Commands,
+){
+    commands
+        .spawn((
+                ScreenUI,
+            Node{
+                width: Val::Percent(100.0),
+                height: Val::Percent(100.0),
+                align_items: AlignItems::Center,
+                justify_content: JustifyContent::SpaceEvenly,
+                flex_direction: FlexDirection::Column, 
+                ..default()
+            }));
 }
 
 fn button_dynamics<T>

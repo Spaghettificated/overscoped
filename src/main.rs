@@ -2,7 +2,7 @@ use std::array;
 
 use bevy::{color::palettes::{basic::*, css::PINK}, ecs::spawn, prelude::*};
 
-use crate::ui::{ui_plugin, ButtonDynamic, ButtonDynamicBundle, ButtonChildrenDynamic, ButtonChildrenDynamicBundle};
+use crate::ui::{ui_plugin, ButtonChildrenDynamic, ButtonChildrenDynamicBundle, ButtonDynamic, ButtonDynamicBundle, ScreenUI};
 
 pub mod ui;
 
@@ -23,7 +23,11 @@ fn main() {
 
 
 
-fn setup(mut commands: Commands, number: Res<TheNumber>) {
+fn setup(
+    mut commands: Commands, 
+    number: Res<TheNumber>,
+    screen: Single<Entity, With<ScreenUI>>
+) {
     // ui camera
     commands.spawn(Camera2d);
     // commands.spawn(button(&assets));
@@ -38,21 +42,13 @@ fn setup(mut commands: Commands, number: Res<TheNumber>) {
 
     // commands.spawn((button(0), UiTransform::from_translation(Val2::px(100., 100.))));
     let the_button = commands.spawn((
-        button(0), 
+        button(number.0 as usize), 
         ButtonDynamicBundle::new( ButtonDynamic { 
             default: UiTransform::IDENTITY, 
             hovered: UiTransform::IDENTITY, 
             pressed: UiTransform::from_translation(Val2::percent(0., 10.)) })
     )).id();
-    commands
-        .spawn(Node{
-                width: Val::Percent(100.0),
-                height: Val::Percent(100.0),
-                align_items: AlignItems::Center,
-                justify_content: JustifyContent::SpaceEvenly,
-                flex_direction: FlexDirection::Column, 
-                ..default()
-            })
+    commands.get_entity(*screen).unwrap()
         .add_children(&[the_button]);
 
 }

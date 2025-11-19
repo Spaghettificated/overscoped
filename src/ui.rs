@@ -1,5 +1,11 @@
-use bevy::{color::palettes::css::RED, ecs::component::Mutable, platform::collections::HashMap, prelude::*};
+use bevy::{ecs::component::Mutable, prelude::*};
 
+pub fn ui_plugin(app: &mut App){
+    // let mut styles = NodeStyleCollection::new();
+    // styles.init(Node::default());
+    app.add_systems(Update, (button_dynamics::<BorderColor>, button_dynamics::<BorderRadius>, button_dynamics::<BackgroundColor>, button_dynamics::<UiTransform>));
+    app.add_systems(Update, (button_children_dynamics::<TextColor>, button_children_dynamics::<BorderRadius>, button_children_dynamics::<BackgroundColor>));
+}
 
 // #[derive(Resource, Deref, DerefMut, Debug)]
 // struct NodeStyle(Node);
@@ -75,53 +81,44 @@ impl<T: Component + Clone> ButtonChildrenDynamicBundle<T> {
 }
 
 
-#[derive(Component, Debug, Clone, Default)]
-struct ButtonStyle{
-    default: NodeStyle,
-    hovered: NodeStyle,
-    pressed: NodeStyle,
-}
+// #[derive(Component, Debug, Clone, Default)]
+// struct ButtonStyle{
+//     default: NodeStyle,
+//     hovered: NodeStyle,
+//     pressed: NodeStyle,
+// }
 
 
-#[derive(Resource, Debug, Clone, Default, PartialEq, Eq, Deref, DerefMut)]
-struct NodeStyle(usize);
+// #[derive(Resource, Debug, Clone, Default, PartialEq, Eq, Deref, DerefMut)]
+// struct NodeStyle(usize);
 
-#[derive(Resource, Debug, Clone)]
-struct NodeStyleCollection(pub Vec<Node>);
+// #[derive(Resource, Debug, Clone)]
+// struct NodeStyleCollection(pub Vec<Node>);
 
-impl NodeStyleCollection {
-    fn new() -> Self {
-        Self(Vec::new())
-    }
-    fn init(&mut self, style: Node) -> NodeStyle{
-        self.0.push(style);
-        NodeStyle(self.0.len()-1)
-    }
-    fn remove(&mut self, id: NodeStyle){
-        self.0.remove(*id);
-    }
-    fn get(& self, id: NodeStyle) -> Option<&Node>{
-        self.0.get(*id)
-    }
-    fn get_mut(&mut self, id: NodeStyle) -> Option<&mut Node>{
-        self.0.get_mut(*id)
-    }
-}
+// impl NodeStyleCollection {
+//     fn new() -> Self {
+//         Self(Vec::new())
+//     }
+//     fn init(&mut self, style: Node) -> NodeStyle{
+//         self.0.push(style);
+//         NodeStyle(self.0.len()-1)
+//     }
+//     fn remove(&mut self, id: NodeStyle){
+//         self.0.remove(*id);
+//     }
+//     fn get(& self, id: NodeStyle) -> Option<&Node>{
+//         self.0.get(*id)
+//     }
+//     fn get_mut(&mut self, id: NodeStyle) -> Option<&mut Node>{
+//         self.0.get_mut(*id)
+//     }
+// }
 
 #[derive(Component)]
 pub struct ScreenUI;
 
-pub fn ui_plugin(app: &mut App){
-    let mut styles = NodeStyleCollection::new();
-    styles.init(Node::default());
-    // app.insert_resource(test_style);
-    // app.init_asset(test_style);
-    app.add_systems(Startup, setup_ui);
-    app.add_systems(Update, (button_dynamics::<BorderColor>, button_dynamics::<BorderRadius>, button_dynamics::<BackgroundColor>, button_dynamics::<UiTransform>));
-    app.add_systems(Update, (button_children_dynamics::<TextColor>, button_children_dynamics::<BorderRadius>, button_children_dynamics::<BackgroundColor>));
-}
 
-fn setup_ui(
+pub fn setup_ui(
     mut commands: Commands,
 ){
     commands
@@ -173,7 +170,7 @@ fn button_children_dynamics<T>
 where T: Component<Mutability = Mutable> + Clone
 {
 
-    for (interaction, mut children) in &mut interaction_query {
+    for (interaction, children) in &mut interaction_query {
         // for child in children.{
             // }
         for child_id in &children{

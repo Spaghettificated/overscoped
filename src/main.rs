@@ -1,23 +1,21 @@
-use std::array;
+use bevy::{color::palettes::basic::*, prelude::*};
 
-use bevy::{color::palettes::{basic::*, css::PINK}, ecs::spawn, prelude::*};
-
-use crate::ui::{ui_plugin, ButtonChildrenDynamic, ButtonChildrenDynamicBundle, ButtonDynamic, ButtonDynamicBundle, ScreenUI};
+use crate::{clicker::{clicker_plugin, TheNumber}, ui::{ui_plugin, ButtonChildrenDynamic, ButtonChildrenDynamicBundle, ButtonDynamic, ButtonDynamicBundle, ScreenUI}};
 
 pub mod ui;
+pub mod clicker;
+pub mod number_resources;
 
-#[derive(Resource, Deref, DerefMut)]
-struct TheNumber(u32);
 
 fn main() {
     App::new()
         .add_plugins((
             DefaultPlugins,
             ui_plugin,
+            clicker_plugin,
         ))
         .insert_resource(ClearColor(WHITE.into()))
-        .insert_resource(TheNumber(0))
-        .add_systems(Startup, setup)
+        .add_systems(Startup, (ui::setup_ui, setup).chain())
         .run();
 }
 
@@ -25,20 +23,11 @@ fn main() {
 
 fn setup(
     mut commands: Commands, 
-    number: Res<TheNumber>,
+    number: Res<clicker::TheNumber>,
     screen: Single<Entity, With<ScreenUI>>
 ) {
     // ui camera
     commands.spawn(Camera2d);
-    // commands.spawn(button(&assets));
-    let days_container = Node {
-        width: Val::Percent(100.0),
-        height: Val::Percent(100.0),
-        align_items: AlignItems::Center,
-        justify_content: JustifyContent::FlexStart,
-        flex_wrap: FlexWrap::Wrap,  
-        ..default()
-    };
 
     // commands.spawn((button(0), UiTransform::from_translation(Val2::px(100., 100.))));
     let the_button = commands.spawn((
@@ -56,6 +45,7 @@ fn setup(
 // fn button(asset_server: &AssetServer) -> impl Bundle + use<>  {
 fn button(i: usize) -> impl Bundle {
     (
+        number_resources::NumberChanger::<clicker::TheNumber>::new(1),
         Button,
         Node {
             width: Val::Px(150.0),
@@ -73,8 +63,8 @@ fn button(i: usize) -> impl Bundle {
         // BackgroundColor(NORMAL_BUTTON),
         ButtonDynamicBundle::new(ButtonDynamic {
              default: BorderColor::all(BLACK), 
-             hovered: BorderColor::all(BLACK), 
-             pressed: BorderColor::all(BLACK) 
+             hovered: BorderColor::all(Color::srgb(0.31, 0.31, 0.31) ), 
+             pressed: BorderColor::all(Color::srgb(0.31, 0.31, 0.31) ), 
         }),
         ButtonDynamicBundle::new(ButtonDynamic {
              default: BackgroundColor(WHITE.into()), 
@@ -83,16 +73,18 @@ fn button(i: usize) -> impl Bundle {
         }),
         TextColor(Color::srgb(0.91, 0.61, 0.04).into()),
         children![(
+            number_resources::TextDisplay::<TheNumber>::new(),
             Text::new(i.to_string()),
             TextFont {
                 // font: asset_server.load("fonts/FiraSans-Bold.ttf"),
                 font_size: 33.0,
                 ..default()
             },
+            // TextColor(BLACK.into()),
             ButtonChildrenDynamicBundle::new(ButtonChildrenDynamic {
                 default: TextColor(BLACK.into()), 
-                hovered: TextColor(Color::srgb(0.07, 0.22, 0.69).into()), 
-                pressed: TextColor(BLACK.into()),
+                hovered: TextColor(Color::srgb(0.31, 0.31, 0.31)), 
+                pressed: TextColor(Color::srgb(0.31, 0.31, 0.31)),
             }),
             TextShadow::default(),
         )]

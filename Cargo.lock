@@ -3947,6 +3947,7 @@ dependencies = [
  "bevy-inspector-egui",
  "bevy_camera",
  "bevy_common_assets",
+ "itertools 0.14.0",
  "serde",
 ]
 

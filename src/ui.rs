@@ -67,6 +67,9 @@ impl<T: Component + Clone> ButtonDynamicBundle<T> {
     pub fn new(property_values: ButtonDynamic<T>) -> Self {
         Self { property: property_values.default.clone(), property_values }
     }
+    pub fn from_values(default: T, hovered: T, pressed: T) -> Self {
+        Self::new(ButtonDynamic { default, hovered, pressed })
+    }
 }
 
 #[derive(Bundle, Debug)]
@@ -77,6 +80,9 @@ pub struct ButtonChildrenDynamicBundle<T: Component>{
 impl<T: Component + Clone> ButtonChildrenDynamicBundle<T> {
     pub fn new(property_values: ButtonChildrenDynamic<T>) -> Self {
         Self { property: property_values.default.clone(), property_values }
+    }
+    pub fn from_values(default: T, hovered: T, pressed: T) -> Self {
+        Self::new(ButtonChildrenDynamic { default, hovered, pressed })
     }
 }
 

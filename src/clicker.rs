@@ -1,6 +1,6 @@
 use bevy::{color::palettes::css::{BLACK, WHITE}, prelude::*};
 
-use crate::{cooldowns::CooldownEnded, number_resources::add_number_resource, ui::ButtonDynamicBundle};
+use crate::{number_resources::add_number_resource, ui::ButtonDynamicBundle};
 
 pub fn clicker_plugin(app: &mut App) { // make separate plugin for each resource ?
     // app.insert_resource(TheNumber(10));
@@ -151,7 +151,7 @@ fn setup_buy_item(
 }
 
 fn buy_items(
-    mut items: Query<(
+    items: Query<(
             &Interaction,
             &mut BuyItem,
         ),

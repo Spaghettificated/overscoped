@@ -1,14 +1,10 @@
 use bevy::{color::palettes::basic::*, prelude::*};
 
-use crate::{clicker::{clicker_plugin, TheNumber}, ui::{ui_plugin, ButtonChildrenDynamic, ButtonChildrenDynamicBundle, ButtonDynamic, ButtonDynamicBundle, ScreenUI}};
-
-pub mod ui;
-pub mod clicker;
-pub mod number_resources;
-pub mod cooldowns;
-pub mod square_lines;
-pub mod connectors;
-pub mod syncing;
+use overscoped::{
+    clicker::{self, clicker_plugin, TheNumber }, 
+    number_resources, 
+    ui::{self, ui_plugin, ButtonChildrenDynamic, ButtonChildrenDynamicBundle, ButtonDynamic, ButtonDynamicBundle, ScreenUI}
+};
 
 
 

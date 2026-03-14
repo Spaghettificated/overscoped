@@ -6,3 +6,4 @@ pub mod cooldowns;
 pub mod square_lines;
 pub mod connectors;
 pub mod syncing;
+pub mod tower_defence;

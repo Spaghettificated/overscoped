@@ -25,14 +25,14 @@ impl ToString for  Round {
 
 pub fn setup_td(
     mut commands: Commands, 
-    life: Res<Life>,
+    mut life: ResMut<Life>,
     screen: Single<Entity, With<ScreenUI>>
 ) {
     // ui camera
 
     commands.spawn(Camera2d);
 
-
+    **life = 10;
 
     let display = commands.spawn((
         (
@@ -61,7 +61,7 @@ pub fn setup_td(
                 ..default()
             },
             TextColor(RED.into()), 
-            TextShadow::default(),
+            // TextShadow::default(),
         )]
     )
     )).id();

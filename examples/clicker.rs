@@ -1,4 +1,4 @@
-use bevy::{color::palettes::basic::*, prelude::*};
+use bevy::prelude::*;
 
 // use crate::{clicker::{clicker_plugin, TheNumber}, ui::{ui_plugin, ButtonChildrenDynamic, ButtonChildrenDynamicBundle, ButtonDynamic, ButtonDynamicBundle, ScreenUI}};
 

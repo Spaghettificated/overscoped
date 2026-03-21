@@ -1,7 +1,7 @@
 
 use bevy::{color::palettes::css::{BLACK, RED, WHITE}, prelude::*};
 
-use crate::{number_resources::{self, add_number_resource}, ui::{ButtonDynamicBundle, ScreenUI}};
+use crate::{number_resources::{self, add_number_resource}, ui::ScreenUI};
 
 pub fn td_plugin(app: &mut App) { // make separate plugin for each resource ?
     // app.insert_resource(TheNumber(10));
@@ -35,7 +35,6 @@ pub fn setup_td(
     **life = 10;
 
     let display = commands.spawn((
-        (
         number_resources::NumberChanger::<Life>::new(**life as i32),
         Node {
             width: Val::Px(150.0),
@@ -63,7 +62,6 @@ pub fn setup_td(
             TextColor(RED.into()), 
             // TextShadow::default(),
         )]
-    )
     )).id();
     commands.get_entity(*screen).unwrap()
         .add_children(&[display]);

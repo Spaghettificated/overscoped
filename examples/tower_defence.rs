@@ -1,4 +1,4 @@
-use bevy::{color::palettes::basic::*, prelude::*, sprite_render::Wireframe2dPlugin};
+use bevy::{prelude::*, sprite_render::Wireframe2dPlugin};
 use overscoped::{
     tower_defence::*, ui::{self, ui_plugin}, utils::as_rgb
 };

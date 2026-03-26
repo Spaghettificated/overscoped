@@ -1,15 +1,24 @@
 
 use bevy::{color::palettes::css::{BLACK, RED, WHITE}, prelude::*};
 
-use crate::{number_resources::{self, add_number_resource}, ui::ScreenUI};
+use crate::{cooldowns::cooldown_plugin, number_resources::{self, add_number_resource}, tower_defence::asset_loader::{Sprites, load_sprites, scale_sprites}, ui::ScreenUI};
+use crate::tower_defence::{towers::*, enemies::*};
+
+pub mod towers;
+pub mod enemies;
+pub mod asset_loader;
 
 pub fn td_plugin(app: &mut App) { // make separate plugin for each resource ?
     // app.insert_resource(TheNumber(10));
     // app.add_systems(Update, display_numbers::<TheNumber>.run_if(resource_changed::<TheNumber>));
     // app.add_systems(Update, change_number::<TheNumber>);
     app.add_plugins(add_number_resource::<Life>);
-    // app.add_systems(Startup, (setup_buy_menu, setup_buy_item).chain());
-    // app.add_systems(Update, (buy_items, produce));
+    app.init_resource::<Sprites<TowerType>>();
+    app.add_plugins(cooldown_plugin);
+    app.add_systems(Startup, (load_sprites));
+    app.add_systems(Update, scale_sprites);
+    app.add_systems(Update, (spawn_towers, move_enemies, take_damage));
+    app.add_observer(spawn_enemies);
 }
 
 #[derive(Resource, Deref, DerefMut, Default)]
@@ -21,6 +30,20 @@ impl ToString for  Life {
 pub struct Round(pub u32);
 impl ToString for  Round {
     fn to_string(&self) -> String { self.0.to_string() } // for implementing 1k 1b itd.
+}
+
+
+fn take_damage(
+    mut commands: Commands, 
+    enemies: Query<(Entity, &Transform), With<Enemy>>,
+    mut life: ResMut<Life>,
+){
+    for (enemy, Transform { translation, .. }) in enemies{
+        if translation.y > -30.{
+            life.0 -= 1;
+            commands.entity(enemy).despawn();
+        }
+    }
 }
 
 pub fn setup_td(

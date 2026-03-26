@@ -16,7 +16,7 @@ pub struct Cooldown{
 }
 
 impl Cooldown {
-    fn new(duration: f32) -> Self {
+    pub fn new(duration: f32) -> Self {
         Self { progress: 0., duration }
     }
 }
@@ -26,9 +26,10 @@ fn progress_cooldowns(
     time: Res<Time>,
 ){
     for (entity, mut cooldown) in cooldowns{
-        cooldown.progress += time.elapsed_secs();
+        cooldown.progress += time.delta_secs();
         let times_ended = cooldown.progress.div_euclid(cooldown.duration) as usize;
-        cooldown.progress %= cooldown.duration;
+        // cooldown.progress %= cooldown.duration;
+        cooldown.progress = cooldown.progress.rem_euclid(cooldown.duration);
         for _ in 0..times_ended {
             commands.trigger(CooldownEnded {entity} );
         }

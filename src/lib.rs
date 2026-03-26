@@ -8,3 +8,4 @@ pub mod syncing;
 pub mod tower_defence;
 pub mod curves;
 pub mod utils;
+pub mod sprites;

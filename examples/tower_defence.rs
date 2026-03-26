@@ -1,6 +1,6 @@
 use bevy::{prelude::*, sprite_render::Wireframe2dPlugin};
 use overscoped::{
-    tower_defence::{asset_loader::Sprites, enemies::{EnemyBundle, EnemySpawnerBundle}, towers::{TowerBundle, TowerType}, *}, ui::{self, ui_plugin}, utils::as_rgb
+    sprites::Sprites, tower_defence::{enemies::{EnemyBundle, EnemySpawnerBundle}, towers::{TowerBundle, TowerType}, *}, ui::{self, ui_plugin}, utils::as_rgb
 };
 
 fn main() {

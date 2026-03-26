@@ -1,6 +1,7 @@
-use bevy::{prelude::*, sprite::Anchor, window::PrimaryWindow};
+use bevy::{prelude::*, window::PrimaryWindow};
 
-use crate::tower_defence::asset_loader::{SpriteBundle, SpriteScale, Sprites};
+use crate::sprites::{SpriteBundle, Sprites};
+
 
 #[derive(PartialEq, Eq, Hash)]
 pub enum TowerType {

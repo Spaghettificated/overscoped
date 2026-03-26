@@ -1,4 +1,4 @@
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::{prelude::*, sprite::Anchor, window::PrimaryWindow};
 
 use crate::sprites::{SpriteBundle, Sprites};
 
@@ -31,10 +31,12 @@ impl TowerBundle {
         transform: Transform, 
         sprites: Res<Sprites<TowerType>>,
     ) -> Self {
+        let mut sprite_bundle = sprites.get(&tower).expect("cannot access tower sprite").clone();
+        sprite_bundle.sprite.color = Color::linear_rgb(0.36, 0.81, 0.88);
         Self { 
             tower: Tower, 
             transform, 
-            sprite_bundle: sprites.get(&tower).expect("cannot access tower sprite").clone(),
+            sprite_bundle,
         }
     }
 }

@@ -45,7 +45,7 @@ pub fn place_towers(
     mut keyboard: MessageReader<KeyboardInput>,
     mouse_buttons: Res<ButtonInput<MouseButton>>,
     placer: Single<(Entity, &mut TowerPlacer)>,
-    ghost: Option<Single<(Entity, &mut Transform, &mut Sprite, &mut Anchor, &mut SpriteScale), With<TowerGhost>>>,
+    ghost: Option<Single<(Entity, &mut Transform, &mut Sprite, &mut Anchor, &mut SpriteScale, &mut SpriteColorTint, &mut Visibility), With<TowerGhost>>>,
     window: Single<&Window, With<PrimaryWindow>>,
     camera: Single<(&Camera, &GlobalTransform)>,
     sprites: Res<Sprites<Tower>>,
@@ -53,7 +53,7 @@ pub fn place_towers(
     let (camera, camera_transform) = camera.into_inner();
     let mouse = window.cursor_position()
         .and_then(|cursor| Some(camera.viewport_to_world(camera_transform, cursor)))
-        .map(|ray| ray.unwrap().origin.truncate());
+        .map(|ray| ray.expect("cannot read mouse position").origin.truncate());
 
     let (placer, mut chosen_tower) = placer.into_inner();
     for ev in keyboard.read(){
@@ -81,7 +81,7 @@ pub fn place_towers(
     let sprite_bundle = chosen_tower.0.and_then(|tower| { sprites.get(&tower).cloned() });
 
 
-    if let Some((ghost, mut ghost_transform, mut ghost_sprite, mut ghost_anchor, mut ghost_scale)) = ghost.map(|g| g.into_inner()){
+    if let Some((ghost, mut ghost_transform, mut ghost_sprite, mut ghost_anchor, mut ghost_scale, mut ghost_tint, mut ghost_visibility)) = ghost.map(|g| g.into_inner()){
         if let Some(mouse) = mouse{
             ghost_transform.translation = mouse.extend(0.);
         }
@@ -90,8 +90,11 @@ pub fn place_towers(
             *ghost_sprite = sprite;
             *ghost_anchor = anchor;
             *ghost_scale = scale;
+            *ghost_tint = SpriteColorTint(GHOST_COLOR);
+            *ghost_visibility = Visibility::Visible;
         } else {
-            commands.entity(ghost).despawn();
+            // commands.entity(ghost).despawn();
+            *ghost_visibility = Visibility::Hidden;
         }
     } else if let (Some(bundle), Some(mouse)) = (sprite_bundle, mouse) {
         commands.spawn((
@@ -99,6 +102,7 @@ pub fn place_towers(
             bundle,
             Transform::from_translation(mouse.extend(0.)),
             SpriteColorTint(GHOST_COLOR),
+            Visibility::Visible,
         ));
     }
 

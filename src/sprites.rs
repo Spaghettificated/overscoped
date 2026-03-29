@@ -3,14 +3,14 @@ use std::{collections::HashMap, hash::Hash};
 use bevy::{prelude::*, sprite::Anchor};
 
 pub fn sprite_plugin(app: &mut App) { 
-    app.add_systems(Update, (scale_sprites, color_sprites));
+    app.add_systems(PostUpdate, (scale_sprites, color_sprites));
 }
 
 #[derive(Component, Deref, DerefMut, Clone, Copy)]
 pub struct SpriteColorTint(pub Color);
 
 pub fn color_sprites(
-    sprites: Query<(&mut Sprite, &SpriteColorTint), Changed<SpriteScale>>,
+    sprites: Query<(&mut Sprite, &SpriteColorTint), Or<(Changed<SpriteColorTint>, Changed<Sprite>)>>,
 ){
     for (mut sprite, color) in sprites{
         sprite.color = color.0;
@@ -21,7 +21,7 @@ pub fn color_sprites(
 pub struct SpriteScale(pub f32);
 
 pub fn scale_sprites(
-    sprites: Query<(&mut Sprite, &SpriteScale), Changed<SpriteScale>>,
+    sprites: Query<(&mut Sprite, &SpriteScale), Or<(Changed<SpriteScale>, Changed<Sprite>)>>,
     atlasess: Res<Assets<TextureAtlasLayout>>,
     images: Res<Assets<Image>>,
 ){

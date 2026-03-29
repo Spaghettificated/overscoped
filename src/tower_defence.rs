@@ -18,7 +18,10 @@ pub fn td_plugin(app: &mut App) { // make separate plugin for each resource ?
     app.add_plugins(sprite_plugin);
     app.init_resource::<Sprites<Tower>>();
     app.add_systems(Startup, (load_td_sprites, spawn_placer));
-    app.add_systems(Update, (place_towers, move_enemies, take_damage, attack_on_click, kill_enemies));
+    app.add_systems(Update, (place_towers, move_enemies, take_damage));
+    app.add_systems(Update, (attack_on_click, kill_enemies));  // for some reason breaks the tower ghost
+    // app.add_systems(Update, kill_enemies);  // for some reason breaks the tower ghost
+    // app.add_systems(Update, attack_on_click);  // for some reason breaks the tower ghost
     app.add_observer(spawn_enemies);
 }
 

@@ -83,10 +83,8 @@ pub fn kill_enemies(
 }
 
 pub fn attack_on_click(
-    mut commands: Commands,
-    mut keyboard: MessageReader<KeyboardInput>,
     mouse_buttons: Res<ButtonInput<MouseButton>>,
-    placer: Single<& TowerPlacer>,
+    placer: Single<&TowerPlacer>,
     enemies: Query<(&Transform, &mut Health), With<Enemy>>,
     window: Single<&Window, With<PrimaryWindow>>,
     camera: Single<(&Camera, &GlobalTransform)>,

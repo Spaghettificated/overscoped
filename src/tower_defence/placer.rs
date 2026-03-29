@@ -70,7 +70,7 @@ pub fn place_towers(
                         Tower::Earth,
                     ].get(n.checked_sub(1).unwrap_or(10))
                 }){
-                    chosen_tower.0 = Some(*tower);
+                    chosen_tower.0 = Some(*tower).filter(|t1| chosen_tower.is_none_or(|t0| t0!=*t1));
                 }
             },
             _ => {}
@@ -110,6 +110,7 @@ pub fn place_towers(
                     Transform::from_translation(mouse.extend(0.)),
                     sprites
                 ));
+                chosen_tower.0 = None;
             }
         }
     }

@@ -1,10 +1,10 @@
-use bevy::{prelude::*, sprite::Anchor, window::PrimaryWindow};
+use bevy::prelude::*;
 
 use crate::sprites::{SpriteBundle, Sprites};
 
 
-#[derive(PartialEq, Eq, Hash)]
-pub enum TowerType {
+#[derive(Component, PartialEq, Eq, Hash, Clone, Copy, Debug)]
+pub enum Tower {
     Small,
     Big,
     Water,
@@ -15,9 +15,6 @@ pub enum TowerType {
     French,
 }
 
-#[derive(Component)]
-pub struct Tower;
-
 #[derive(Bundle)]
 pub struct TowerBundle {
     tower: Tower,
@@ -27,39 +24,17 @@ pub struct TowerBundle {
 
 impl TowerBundle {
     pub fn new(
-        tower: TowerType,
+        tower: Tower,
         transform: Transform, 
-        sprites: Res<Sprites<TowerType>>,
+        sprites: Res<Sprites<Tower>>,
     ) -> Self {
-        let mut sprite_bundle = sprites.get(&tower).expect("cannot access tower sprite").clone();
-        sprite_bundle.sprite.color = Color::linear_rgb(0.36, 0.81, 0.88);
+        let sprite_bundle = sprites.get(&tower).expect("cannot access tower sprite").clone();
         Self { 
-            tower: Tower, 
+            tower, 
             transform, 
             sprite_bundle,
         }
     }
 }
 
-pub fn spawn_towers(
-    mut commands: Commands,
-    buttons: Res<ButtonInput<MouseButton>>,
-    window: Single<&Window, With<PrimaryWindow>>,
-    camera: Single<(&Camera, &GlobalTransform)>,
-    sprites: Res<Sprites<TowerType>>,
-){
-    let (camera, camera_transform) = camera.into_inner();
-    if buttons.just_pressed(MouseButton::Left){
-        if let Some(mouse) = window.cursor_position()
-            .and_then(|cursor| Some(camera.viewport_to_world(camera_transform, cursor)))
-            .map(|ray| ray.unwrap().origin.truncate()) 
-            {
-            commands.spawn(TowerBundle::new(
-                TowerType::Earth,
-                Transform::from_translation(mouse.extend(0.)),
-                sprites
-            ));
-        }
-    }
 
-}

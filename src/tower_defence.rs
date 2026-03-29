@@ -1,12 +1,13 @@
 
 use bevy::{color::palettes::css::{BLACK, RED, WHITE}, prelude::*};
 
-use crate::{cooldowns::cooldown_plugin, number_resources::{self, add_number_resource}, sprites::{Sprites, scale_sprites, sprite_plugin}, tower_defence::asset_loader::load_td_sprites, ui::ScreenUI};
+use crate::{cooldowns::cooldown_plugin, number_resources::{self, add_number_resource}, sprites::{Sprites, sprite_plugin}, tower_defence::{asset_loader::load_td_sprites, placer::{place_towers, spawn_placer}}, ui::ScreenUI};
 use crate::tower_defence::{towers::*, enemies::*};
 
 pub mod towers;
 pub mod enemies;
 pub mod asset_loader;
+pub mod placer;
 
 pub fn td_plugin(app: &mut App) { // make separate plugin for each resource ?
     // app.insert_resource(TheNumber(10));
@@ -15,9 +16,9 @@ pub fn td_plugin(app: &mut App) { // make separate plugin for each resource ?
     app.add_plugins(add_number_resource::<Life>);
     app.add_plugins(cooldown_plugin);
     app.add_plugins(sprite_plugin);
-    app.init_resource::<Sprites<TowerType>>();
-    app.add_systems(Startup, load_td_sprites);
-    app.add_systems(Update, (spawn_towers, move_enemies, take_damage));
+    app.init_resource::<Sprites<Tower>>();
+    app.add_systems(Startup, (load_td_sprites, spawn_placer));
+    app.add_systems(Update, (place_towers, move_enemies, take_damage));
     app.add_observer(spawn_enemies);
 }
 

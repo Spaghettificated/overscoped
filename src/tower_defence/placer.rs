@@ -7,7 +7,7 @@ use crate::{sprites::{SpriteBundle, SpriteColorTint, SpriteScale, Sprites}, towe
 const GHOST_COLOR: Color = Color::linear_rgba(0.36, 0.81, 0.88, 0.5);
 
 #[derive(Component, Deref, DerefMut)]
-pub struct TowerPlacer(Option<Tower>);
+pub struct TowerPlacer(pub Option<Tower>);
 #[derive(Component)]
 pub struct TowerGhost;
 

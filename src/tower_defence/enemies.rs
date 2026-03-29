@@ -1,6 +1,10 @@
-use bevy::prelude::*;
+use bevy::{input::keyboard::KeyboardInput, prelude::*, window::PrimaryWindow};
 
-use crate::cooldowns::{Cooldown, CooldownEnded};
+use crate::{cooldowns::{Cooldown, CooldownEnded}, tower_defence::placer::TowerPlacer};
+
+
+#[derive(Component, Deref, DerefMut)]
+pub struct Health(u32);
 
 #[derive(Component)]
 pub struct Enemy;
@@ -12,6 +16,7 @@ pub struct EnemySpawner;
 pub struct EnemyBundle {
     enemy: Enemy,
     transform: Transform,
+    health: Health,
     sprite: Sprite,
 }
 
@@ -20,6 +25,7 @@ impl EnemyBundle {
         Self { 
             enemy: Enemy, 
             transform, 
+            health: Health(1),
             sprite: Sprite{
                 image: asset_server.load("low pixel/enemy.png"),
                 custom_size: Some(Vec2::new(64., 64.)),
@@ -63,4 +69,41 @@ pub fn spawn_enemies(
         transform.clone(), 
         &asset_server,
     ));
+}
+
+pub fn kill_enemies(
+    mut commands: Commands, 
+    enemies: Query<(Entity, &Health), With<Enemy>>,
+){
+    for (enemy, health) in enemies{
+        if health.0 <= 0{
+            commands.entity(enemy).despawn();
+        }
+    }
+}
+
+pub fn attack_on_click(
+    mut commands: Commands,
+    mut keyboard: MessageReader<KeyboardInput>,
+    mouse_buttons: Res<ButtonInput<MouseButton>>,
+    placer: Single<& TowerPlacer>,
+    enemies: Query<(&Transform, &mut Health), With<Enemy>>,
+    window: Single<&Window, With<PrimaryWindow>>,
+    camera: Single<(&Camera, &GlobalTransform)>,
+){
+    if placer.0 != None {return;}
+    let (camera, camera_transform) = camera.into_inner();
+    let mouse = window.cursor_position()
+        .and_then(|cursor| Some(camera.viewport_to_world(camera_transform, cursor)))
+        .map(|ray| ray.unwrap().origin.truncate());
+
+    if let Some(mouse) = mouse {
+        if mouse_buttons.just_pressed(MouseButton::Left){
+            for (transform, mut health) in enemies {
+                if transform.translation.xy().distance(mouse) < 13.{
+                    health.0 -= 1;
+                }
+            }
+        }
+    }
 }

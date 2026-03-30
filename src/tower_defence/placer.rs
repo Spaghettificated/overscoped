@@ -11,41 +11,33 @@ pub struct TowerPlacer(pub Option<Tower>);
 #[derive(Component)]
 pub struct TowerGhost;
 
-// #[derive(Bundle)]
-// pub struct TowerGhostBundle {
-//     tower: TowerGhost,
-//     transform: Transform,
-//     sprite_bundle: SpriteBundle,
-// }
-
-// impl TowerGhostBundle {
-//     pub fn new(
-//         tower: TowerGhost,
-//         transform: Transform, 
-//         sprites: Res<Sprites<Tower>>,
-//     ) -> Self {
-//         let sprite_bundle = sprites.get(&tower).expect("cannot access tower sprite").clone();
-//         Self { 
-//             tower, 
-//             transform, 
-//             sprite_bundle,
-//         }
-//     }
-// }
-
 pub fn spawn_placer(
     mut commands: Commands,
 ){
     commands.spawn((TowerPlacer(None)));
-    // commands.spawn((TowerGhost));
+    commands.spawn((
+            TowerGhost,
+            SpriteBundle::default(),
+            Transform::default(),
+            SpriteColorTint(GHOST_COLOR),
+            Visibility::Hidden,
+        ));
 }
+
+// #[derive(Event)]
+// pub struct SelectTower(pub Tower);
+
+// pub fn select_towers(
+//     mut keyboard: MessageReader<KeyboardInput>,
+// )
+
 
 pub fn place_towers(
     mut commands: Commands,
     mut keyboard: MessageReader<KeyboardInput>,
     mouse_buttons: Res<ButtonInput<MouseButton>>,
     placer: Single<(Entity, &mut TowerPlacer)>,
-    ghost: Option<Single<(Entity, &mut Transform, &mut Sprite, &mut Anchor, &mut SpriteScale, &mut SpriteColorTint, &mut Visibility), With<TowerGhost>>>,
+    ghost: Single<(Entity, &mut Transform, &mut Sprite, &mut Anchor, &mut SpriteScale, &mut SpriteColorTint, &mut Visibility), With<TowerGhost>>,
     window: Single<&Window, With<PrimaryWindow>>,
     camera: Single<(&Camera, &GlobalTransform)>,
     sprites: Res<Sprites<Tower>>,
@@ -56,57 +48,53 @@ pub fn place_towers(
         .map(|ray| ray.expect("cannot read mouse position").origin.truncate());
 
     let (placer, mut chosen_tower) = placer.into_inner();
-    for ev in keyboard.read(){
-        if ev.state == ButtonState::Released { continue; }
-        match &ev.logical_key{
-            Key::Character(s) => {
-                if let Some(tower) = s.parse::<usize>().ok().and_then(|n|{
-                    [
-                        Tower::Small,
-                        Tower::Big,
-                        Tower::Fire,
-                        Tower::Water,
-                        Tower::Air,
-                        Tower::Earth,
-                    ].get(n.checked_sub(1).unwrap_or(10))
-                }){
-                    chosen_tower.0 = Some(*tower).filter(|t1| chosen_tower.is_none_or(|t0| t0!=*t1));
-                }
-            },
-            _ => {}
+    let (ghost, mut ghost_transform, ..) = ghost.into_inner();
+    
+    let new_tower = keyboard.read()
+        .filter(|ev| {ev.state == ButtonState::Released })
+        .find_map(|ev| {
+            match &ev.logical_key{
+                Key::Character(s) => {
+                    s.parse::<usize>().ok().and_then(|n|{
+                        [
+                            Tower::Small,
+                            Tower::Big,
+                            Tower::Fire,
+                            Tower::Water,
+                            Tower::Air,
+                            Tower::Earth,
+                        ].get(n.checked_sub(1).unwrap_or(10))
+                    }).cloned()
+                },
+                _ => { None }
+            }
+        });
+
+    if let Some(new_tower) = new_tower{
+        chosen_tower.0 = if chosen_tower.0 != Some(new_tower) {Some(new_tower)} else {None};
+        
+        let sprite_bundle = chosen_tower.0.and_then(|tower| { sprites.get(&tower).cloned() });
+        
+        if let Some(SpriteBundle {sprite, anchor, scale }) = sprite_bundle{
+            commands.entity(ghost).insert((
+                sprite,
+                anchor,
+                scale,
+                Visibility::Visible,
+            ));
+        } else {        
+            commands.entity(ghost).insert(Visibility::Hidden);
         }
     }
 
+    
 
-    let sprite_bundle = chosen_tower.0.and_then(|tower| { sprites.get(&tower).cloned() });
-
-
-    if let Some((ghost, mut ghost_transform, mut ghost_sprite, mut ghost_anchor, mut ghost_scale, mut ghost_tint, mut ghost_visibility)) = ghost.map(|g| g.into_inner()){
-        if let Some(mouse) = mouse{
-            ghost_transform.translation = mouse.extend(0.);
-        }
-        
-        if let Some(SpriteBundle {sprite, anchor, scale }) = sprite_bundle{
-            *ghost_sprite = sprite;
-            *ghost_anchor = anchor;
-            *ghost_scale = scale;
-            *ghost_tint = SpriteColorTint(GHOST_COLOR);
-            *ghost_visibility = Visibility::Visible;
-        } else {
-            // commands.entity(ghost).despawn();
-            *ghost_visibility = Visibility::Hidden;
-        }
-    } else if let (Some(bundle), Some(mouse)) = (sprite_bundle, mouse) {
-        commands.spawn((
-            TowerGhost,
-            bundle,
-            Transform::from_translation(mouse.extend(0.)),
-            SpriteColorTint(GHOST_COLOR),
-            Visibility::Visible,
-        ));
+    if let Some(mouse) = mouse{
+        ghost_transform.translation = mouse.extend(0.);
     }
 
     if let Some(mouse) = mouse {
+        println!("{:?}", chosen_tower.0);
         if mouse_buttons.just_pressed(MouseButton::Left){
             if let Some(tower) = chosen_tower.0{
                 commands.spawn(TowerBundle::new(
@@ -115,6 +103,7 @@ pub fn place_towers(
                     sprites
                 ));
                 chosen_tower.0 = None;
+                commands.entity(ghost).insert(Visibility::Hidden);
             }
         }
     }

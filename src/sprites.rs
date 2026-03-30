@@ -19,6 +19,7 @@ pub fn color_sprites(
 
 #[derive(Component, Deref, DerefMut, Clone, Copy)]
 pub struct SpriteScale(pub f32);
+impl Default for SpriteScale { fn default() -> Self { SpriteScale(1.) } }
 
 pub fn scale_sprites(
     sprites: Query<(&mut Sprite, &SpriteScale), Or<(Changed<SpriteScale>, Changed<Sprite>)>>,
@@ -36,7 +37,7 @@ pub fn scale_sprites(
 }
 
 
-#[derive(Bundle, Clone)]
+#[derive(Bundle, Clone, Default)]
 pub struct SpriteBundle {
     pub sprite: Sprite,
     pub anchor: Anchor,

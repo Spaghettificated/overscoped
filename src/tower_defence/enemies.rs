@@ -1,6 +1,6 @@
 use bevy::{input::keyboard::KeyboardInput, prelude::*, window::PrimaryWindow};
 
-use crate::{cooldowns::{Cooldown, CooldownEnded}, tower_defence::placer::TowerPlacer};
+use crate::{cooldowns::{Cooldown, CooldownEnded}, tower_defence::placer::TowerPlacer, utils::MouseQuery};
 
 
 #[derive(Component, Deref, DerefMut)]
@@ -86,14 +86,10 @@ pub fn attack_on_click(
     mouse_buttons: Res<ButtonInput<MouseButton>>,
     placer: Single<&TowerPlacer>,
     enemies: Query<(&Transform, &mut Health), With<Enemy>>,
-    window: Single<&Window, With<PrimaryWindow>>,
-    camera: Single<(&Camera, &GlobalTransform)>,
+    mouse: MouseQuery,
 ){
     if placer.0 != None {return;}
-    let (camera, camera_transform) = camera.into_inner();
-    let mouse = window.cursor_position()
-        .and_then(|cursor| Some(camera.viewport_to_world(camera_transform, cursor)))
-        .map(|ray| ray.unwrap().origin.truncate());
+    let mouse = mouse.position();
 
     if let Some(mouse) = mouse {
         if mouse_buttons.just_pressed(MouseButton::Left){

@@ -1,8 +1,7 @@
 
-use std::clone;
 
-use bevy::{input::{ButtonState, keyboard::{Key, KeyboardInput}}, prelude::*, sprite::Anchor, window::PrimaryWindow};
-use crate::{sprites::{SpriteBundle, SpriteColorTint, SpriteScale, Sprites}, tower_defence::towers::{Tower, TowerBundle}};
+use bevy::{input::{ButtonState, keyboard::{Key, KeyboardInput}}, prelude::*, sprite::Anchor};
+use crate::{sprites::{SpriteBundle, SpriteColorTint, SpriteScale, Sprites}, tower_defence::towers::{Tower, TowerBundle}, utils::MouseQuery};
 
 const GHOST_COLOR: Color = Color::linear_rgba(0.36, 0.81, 0.88, 0.5);
 
@@ -32,20 +31,17 @@ pub fn spawn_placer(
 // )
 
 
+
 pub fn place_towers(
     mut commands: Commands,
     mut keyboard: MessageReader<KeyboardInput>,
     mouse_buttons: Res<ButtonInput<MouseButton>>,
     placer: Single<(Entity, &mut TowerPlacer)>,
     ghost: Single<(Entity, &mut Transform, &mut Sprite, &mut Anchor, &mut SpriteScale, &mut SpriteColorTint, &mut Visibility), With<TowerGhost>>,
-    window: Single<&Window, With<PrimaryWindow>>,
-    camera: Single<(&Camera, &GlobalTransform)>,
+    mouse: MouseQuery,
     sprites: Res<Sprites<Tower>>,
 ){
-    let (camera, camera_transform) = camera.into_inner();
-    let mouse = window.cursor_position()
-        .and_then(|cursor| Some(camera.viewport_to_world(camera_transform, cursor)))
-        .map(|ray| ray.expect("cannot read mouse position").origin.truncate());
+    let mouse = mouse.position();
 
     let (placer, mut chosen_tower) = placer.into_inner();
     let (ghost, mut ghost_transform, ..) = ghost.into_inner();
@@ -94,7 +90,6 @@ pub fn place_towers(
     }
 
     if let Some(mouse) = mouse {
-        println!("{:?}", chosen_tower.0);
         if mouse_buttons.just_pressed(MouseButton::Left){
             if let Some(tower) = chosen_tower.0{
                 commands.spawn(TowerBundle::new(

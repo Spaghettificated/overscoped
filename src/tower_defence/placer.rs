@@ -95,7 +95,6 @@ pub fn place_towers(
                 commands.spawn(TowerBundle::new(
                     tower,
                     Transform::from_translation(mouse.extend(0.)),
-                    sprites
                 ));
                 chosen_tower.0 = None;
                 commands.entity(ghost).insert(Visibility::Hidden);

@@ -33,8 +33,6 @@ fn setup(
     commands.spawn((TowerBundle::new(
         Tower::Small,
         Transform::from_xyz(300., 300., 0.),
-        sprites,
-        
     ), Visibility::Visible));
     commands.spawn(EnemySpawnerBundle::new(
         Transform::from_xyz(0., -340., 0.), 

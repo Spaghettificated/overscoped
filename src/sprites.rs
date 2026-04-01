@@ -1,4 +1,4 @@
-use std::{collections::HashMap, hash::Hash};
+use std::{collections::HashMap, fmt::Debug, hash::Hash};
 
 use bevy::{prelude::*, sprite::Anchor};
 
@@ -89,3 +89,22 @@ impl<T: Hash> Default for Sprites<T>{
     }
 } 
 
+#[derive(Component)]
+pub struct NoSpriteInsert;
+
+pub fn insert_sprites<T: Component + Hash + Eq>(
+    mut commands: Commands,
+    entities: Query<(Entity, &T), (Added<T>, Without<NoSpriteInsert>)>,
+    sprites: Res<Sprites<T>>,
+){
+    for (entity, component) in entities{
+        commands.entity(entity).insert(
+            sprites.get(component).expect("cannot access tower sprite").clone()
+        );
+    }
+}
+
+pub fn sprite_resource_plugin<T: Component + Hash + Eq>(app: &mut App) { 
+    app.init_resource::<Sprites<T>>();
+    app.add_systems(PostUpdate, insert_sprites::<T>.before( color_sprites).before(color_sprites));
+}

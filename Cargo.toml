@@ -11,3 +11,4 @@ bevy_camera = "0.17.1"
 bevy_common_assets = {version = "0.14.0", features = ["json"]}
 itertools = "0.14.0"
 serde = "1.0.228"
+ordered-float = "5.3.0"

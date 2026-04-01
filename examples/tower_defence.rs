@@ -1,6 +1,6 @@
 use bevy::{prelude::*, sprite_render::Wireframe2dPlugin};
 use overscoped::{
-    sprites::Sprites, tower_defence::{enemies::{EnemyBundle, EnemySpawnerBundle}, towers::{TowerBundle, Tower}, *}, ui::{self, ui_plugin}, utils::as_rgb
+    cooldowns::Cooldown, sprites::Sprites, tower_defence::{enemies::{EnemyBundle, EnemySpawnerBundle}, projectiles::ProjectileSpawner, towers::{Tower, TowerBundle}, *}, ui::{self, ui_plugin}, utils::as_rgb
 };
 
 fn main() {
@@ -36,12 +36,13 @@ fn setup(
         sprites,
         
     ), Visibility::Visible));
-    commands.spawn(EnemyBundle::new(
-        Transform::from_xyz(0., -200., 0.0),
-        &asset_server
-    ));
     commands.spawn(EnemySpawnerBundle::new(
         Transform::from_xyz(0., -340., 0.), 
         5.
+    ));
+    commands.spawn((
+        ProjectileSpawner,
+        Cooldown::new(3.),
+        Transform::from_xyz(100., 100., 0.)
     ));
 }

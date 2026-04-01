@@ -1,18 +1,22 @@
 
+use avian2d::{PhysicsPlugins, prelude::PhysicsDebugPlugin};
 use bevy::{color::palettes::css::{BLACK, RED, WHITE}, prelude::*};
 
-use crate::{cooldowns::cooldown_plugin, number_resources::{self, add_number_resource}, sprites::{Sprites, sprite_plugin}, tower_defence::{asset_loader::load_td_sprites, placer::{place_towers, spawn_placer}}, ui::ScreenUI};
+use crate::{cooldowns::cooldown_plugin, number_resources::{self, add_number_resource}, sprites::{Sprites, sprite_plugin}, tower_defence::{asset_loader::load_td_sprites, placer::{place_towers, spawn_placer}, projectiles::spawn_projectiles}, ui::ScreenUI};
 use crate::tower_defence::{towers::*, enemies::*};
 
 pub mod towers;
 pub mod enemies;
 pub mod asset_loader;
 pub mod placer;
+pub mod projectiles;
 
 pub fn td_plugin(app: &mut App) { // make separate plugin for each resource ?
     // app.insert_resource(TheNumber(10));
     // app.add_systems(Update, display_numbers::<TheNumber>.run_if(resource_changed::<TheNumber>));
     // app.add_systems(Update, change_number::<TheNumber>);
+    app.add_plugins(PhysicsPlugins::default());
+    app.add_plugins(PhysicsDebugPlugin);
     app.add_plugins(add_number_resource::<Life>);
     app.add_plugins(cooldown_plugin);
     app.add_plugins(sprite_plugin);
@@ -23,6 +27,7 @@ pub fn td_plugin(app: &mut App) { // make separate plugin for each resource ?
     // app.add_systems(Update, kill_enemies);  // for some reason breaks the tower ghost
     // app.add_systems(Update, attack_on_click);  // for some reason breaks the tower ghost
     app.add_observer(spawn_enemies);
+    app.add_observer(spawn_projectiles);
 }
 
 #[derive(Resource, Deref, DerefMut, Default)]

@@ -1,10 +1,11 @@
+use avian2d::{parry::simba::scalar::SupersetOf, prelude::{Collider, Sensor}};
 use bevy::{input::keyboard::KeyboardInput, prelude::*, window::PrimaryWindow};
 
 use crate::{cooldowns::{Cooldown, CooldownEnded}, tower_defence::placer::TowerPlacer, utils::MouseQuery};
 
 
 #[derive(Component, Deref, DerefMut)]
-pub struct Health(u32);
+pub struct Health(i32);
 
 #[derive(Component)]
 pub struct Enemy;
@@ -25,7 +26,7 @@ impl EnemyBundle {
         Self { 
             enemy: Enemy, 
             transform, 
-            health: Health(1),
+            health: Health(10),
             sprite: Sprite{
                 image: asset_server.load("low pixel/enemy.png"),
                 custom_size: Some(Vec2::new(64., 64.)),
@@ -61,13 +62,17 @@ impl EnemySpawnerBundle {
 pub fn spawn_enemies(
     trigger: On<CooldownEnded>,
     mut commands: Commands, 
-    spawner: Single<(Entity, &Transform, &Cooldown), With<EnemySpawner>>,
+    spawner: Single<(Entity, &Transform), With<EnemySpawner>>,
     asset_server: Res<AssetServer>,
 ){
-    let (spawner, transform, cooldown) = spawner.into_inner();
-    commands.spawn(EnemyBundle::new(
+    let (spawner, transform) = spawner.into_inner();
+    if trigger.event_target() != spawner { return; }
+    commands.spawn((EnemyBundle::new(
         transform.clone(), 
         &asset_server,
+    ),
+        Collider::circle(20.),
+        Sensor,
     ));
 }
 
@@ -85,7 +90,7 @@ pub fn kill_enemies(
 pub fn attack_on_click(
     mouse_buttons: Res<ButtonInput<MouseButton>>,
     placer: Single<&TowerPlacer>,
-    enemies: Query<(&Transform, &mut Health), With<Enemy>>,
+    enemies: Query<(&Transform, &mut Health, &Collider), With<Enemy>>,
     mouse: MouseQuery,
 ){
     if placer.0 != None {return;}
@@ -93,9 +98,9 @@ pub fn attack_on_click(
 
     if let Some(mouse) = mouse {
         if mouse_buttons.just_pressed(MouseButton::Left){
-            for (transform, mut health) in enemies {
-                if transform.translation.xy().distance(mouse) < 13.{
-                    health.0 -= 1;
+            for (transform, mut health, collider) in enemies {
+                if collider.contains_point(transform.translation.xy(), transform.rotation, mouse){
+                    health.0 -= 10;
                 }
             }
         }

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::sprites::{SpriteBundle, Sprites};
+use crate::{cooldowns::Cooldown, sprites::{SpriteBundle, Sprites}, tower_defence::projectiles::ProjectileSpawner};
 
 
 #[derive(Component, PartialEq, Eq, Hash, Clone, Copy, Debug)]
@@ -33,4 +33,30 @@ impl TowerBundle {
     }
 }
 
+impl Tower{
+    pub fn add_tower_components(
+        &self, 
+        mut commands: Commands,
+        entity: Entity,
+    ){
+        match self{
+            Tower::Small => {
+                commands.entity(entity).insert((
+                    ProjectileSpawner,
+                    Cooldown::new(3.),
+                ));
+            }
+            _ => todo!()
+        }
+    }
+}
 
+pub fn insert_tower_specific_components(
+    added: On<Add, Tower>,
+    commands: Commands,
+    towers: Query<&Tower>,
+){
+    if let Ok(tower) = towers.get(added.entity){
+        tower.add_tower_components(commands, added.entity);
+    }
+}

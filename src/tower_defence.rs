@@ -39,6 +39,7 @@ pub fn td_plugin(app: &mut App) { // make separate plugin for each resource ?
     // app.add_systems(Update, attack_on_click);  // for some reason breaks the tower ghost
     app.add_observer(spawn_enemies);
     app.add_observer(spawn_projectiles);
+    app.add_observer(insert_tower_specific_components);
 }
 
 #[derive(Resource, Deref, DerefMut, Default)]

@@ -30,17 +30,17 @@ fn setup(
         // MeshMaterial2d(materials.add(color)),
         Transform::from_xyz(0., -500., 0.0)
     ));
-    commands.spawn((TowerBundle::new(
-        Tower::Small,
-        Transform::from_xyz(300., 300., 0.),
-    ), Visibility::Visible));
+    // commands.spawn((TowerBundle::new(
+    //     Tower::Small,
+    //     Transform::from_xyz(300., 300., 0.),
+    // ), Visibility::Visible));
     commands.spawn(EnemySpawnerBundle::new(
         Transform::from_xyz(0., -340., 0.), 
         5.
     ));
-    commands.spawn((
-        ProjectileSpawner,
-        Cooldown::new(3.),
-        Transform::from_xyz(100., 100., 0.)
-    ));
+    // commands.spawn((
+    //     ProjectileSpawner,
+    //     Cooldown::new(3.),
+    //     Transform::from_xyz(100., 100., 0.)
+    // ));
 }

@@ -1,9 +1,9 @@
 use std::f32::consts::PI;
 
-use avian2d::{parry::na::Rotation, prelude::{AngularVelocity, Collider, LinearVelocity, RigidBody}};
+use avian2d::{parry::na::Rotation, prelude::{AngularVelocity, Collider, CollisionEventsEnabled, CollisionStart, LinearVelocity, RigidBody}};
 use bevy::{math::NormedVectorSpace, prelude::*};
 use ordered_float::{NotNan, OrderedFloat};
-use crate::{cooldowns::{Cooldown, CooldownEnded}, sprites::Sprites, tower_defence::{enemies::{self, Enemy}, towers::Tower}};
+use crate::{cooldowns::{Cooldown, CooldownEnded}, sprites::Sprites, tower_defence::{enemies::{self, Enemy, Health}, towers::Tower}};
 
 #[derive(Component)]
 pub struct Projectile;
@@ -31,8 +31,24 @@ pub fn spawn_projectiles(
                 RigidBody::Kinematic,
                 LinearVelocity(to_target.normalize() * speed),
                 Collider::rectangle(10., 4.),
-            ));
+                CollisionEventsEnabled
+            ))
+            .observe(on_enemy_hit);
         }
     }
+}
+
+pub fn on_enemy_hit(
+    collision: On<CollisionStart>,
+    mut commands: Commands,
+    mut enemies: Query<&mut Health,With<Enemy>>
+){
+    let projectile = collision.collider1;
+    let enemy = collision.collider2;
+    if let Ok(mut enemy_health) = enemies.get_mut(enemy){
+        **enemy_health -= 5;
+        commands.entity(projectile).despawn();
+    }
+
 }
 

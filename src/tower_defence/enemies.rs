@@ -1,4 +1,4 @@
-use avian2d::{parry::simba::scalar::SupersetOf, prelude::{Collider, Sensor}};
+use avian2d::{parry::simba::scalar::SupersetOf, prelude::{Collider, CollisionEventsEnabled, Sensor}};
 use bevy::{input::keyboard::KeyboardInput, prelude::*, window::PrimaryWindow};
 
 use crate::{cooldowns::{Cooldown, CooldownEnded}, tower_defence::placer::TowerPlacer, utils::MouseQuery};
@@ -19,6 +19,7 @@ pub struct EnemyBundle {
     transform: Transform,
     health: Health,
     sprite: Sprite,
+    collision_enabled: CollisionEventsEnabled,
 }
 
 impl EnemyBundle {
@@ -32,6 +33,7 @@ impl EnemyBundle {
                 custom_size: Some(Vec2::new(64., 64.)),
                 ..default()
             },
+            collision_enabled: CollisionEventsEnabled,
         }
     }
 }

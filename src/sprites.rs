@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fmt::Debug, hash::Hash};
+use std::{collections::HashMap, hash::Hash};
 
 use bevy::{prelude::*, sprite::Anchor};
 

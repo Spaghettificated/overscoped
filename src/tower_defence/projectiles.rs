@@ -1,9 +1,8 @@
-use std::f32::consts::PI;
 
-use avian2d::{prelude::{AngularVelocity, Collider, CollisionEventsEnabled, CollisionStart, LinearVelocity, RigidBody}};
+use avian2d::prelude::{Collider, CollisionEventsEnabled, CollisionStart, LinearVelocity, RigidBody};
 use bevy::{math::NormedVectorSpace, prelude::*};
-use ordered_float::{NotNan, OrderedFloat};
-use crate::{cooldowns::{Cooldown, CooldownEnded}, sprites::Sprites, tower_defence::{enemies::{self, Enemy, Health}, towers::Tower}};
+use ordered_float::OrderedFloat;
+use crate::{cooldowns::CooldownEnded, tower_defence::enemies::{Enemy, Health}};
 
 #[derive(Component)]
 pub struct Projectile;

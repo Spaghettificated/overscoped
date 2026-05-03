@@ -1,5 +1,5 @@
-use avian2d::{parry::simba::scalar::SupersetOf, prelude::{Collider, CollisionEventsEnabled, Sensor}};
-use bevy::{input::keyboard::KeyboardInput, prelude::*, window::PrimaryWindow};
+use avian2d::prelude::{Collider, CollisionEventsEnabled, Sensor};
+use bevy::prelude::*;
 
 use crate::{cooldowns::{Cooldown, CooldownEnded}, tower_defence::placer::TowerPlacer, utils::MouseQuery};
 

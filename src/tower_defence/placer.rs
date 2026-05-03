@@ -13,7 +13,7 @@ pub struct TowerGhost;
 pub fn spawn_placer(
     mut commands: Commands,
 ){
-    commands.spawn((TowerPlacer(None)));
+    commands.spawn(TowerPlacer(None));
     commands.spawn((
             TowerGhost,
             SpriteBundle::default(),
@@ -43,7 +43,7 @@ pub fn place_towers(
 ){
     let mouse = mouse.position();
 
-    let (placer, mut chosen_tower) = placer.into_inner();
+    let (_placer, mut chosen_tower) = placer.into_inner();
     let (ghost, mut ghost_transform, ..) = ghost.into_inner();
     
     let new_tower = keyboard.read()

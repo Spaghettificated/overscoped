@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{cooldowns::Cooldown, sprites::{SpriteBundle, Sprites}, tower_defence::projectiles::ProjectileSpawner};
+use crate::{cooldowns::Cooldown, tower_defence::projectiles::ProjectileSpawner};
 
 
 #[derive(Component, PartialEq, Eq, Hash, Clone, Copy, Debug)]

@@ -5,7 +5,7 @@ use bevy::{color::palettes::css::{BLACK, RED, WHITE}, prelude::*};
 use crate::{
     cooldowns::cooldown_plugin, 
     number_resources::{self, add_number_resource}, 
-    sprites::{Sprites, sprite_plugin, sprite_resource_plugin}, 
+    sprites::{sprite_plugin, sprite_resource_plugin}, 
     tower_defence::{asset_loader::load_td_sprites, 
     placer::{place_towers, spawn_placer}, 
     projectiles::spawn_projectiles}, 

@@ -3,12 +3,21 @@ name = "overscoped"
 version = "0.1.0"
 edition = "2024"
 
+# Enable a small amount of optimization in the dev profile.
+[profile.dev]
+opt-level = 1
+
+# Enable a large amount of optimization in the dev profile for dependencies.
+[profile.dev.package."*"]
+opt-level = 3
+
+
 [dependencies]
-avian2d = "0.4.1"
-bevy = { version = "0.17.1", features = ["dynamic_linking"] }
-bevy-inspector-egui = "0.35.0"
-bevy_camera = "0.17.1"
-bevy_common_assets = {version = "0.14.0", features = ["json"]}
+avian2d = "0.6.1"
+bevy = { version = "0.18.1", features = ["dynamic_linking"] }
+bevy-inspector-egui = "0.36.0"
+bevy_camera = "0.18.1"
+bevy_common_assets = {version = "0.16.0", features = ["json"]}
 itertools = "0.14.0"
 serde = "1.0.228"
 ordered-float = "5.3.0"

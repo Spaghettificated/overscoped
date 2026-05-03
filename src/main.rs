@@ -57,10 +57,10 @@ fn button(i: usize) -> impl Bundle {
             // vertically center child text
             align_items: AlignItems::Center,
             position_type: PositionType::Absolute,
+            border_radius: BorderRadius::all(Val::Percent(15.)),
             ..default()
         },
         // BorderColor::all(Color::BLACK),
-        BorderRadius::all(Val::Percent(15.)),
         // BackgroundColor(NORMAL_BUTTON),
         ButtonDynamicBundle::new(ButtonDynamic {
              default: BorderColor::all(BLACK), 

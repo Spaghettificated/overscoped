@@ -89,9 +89,9 @@ pub fn setup_td(
             // vertically center child text
             align_items: AlignItems::Center,
             position_type: PositionType::Absolute,
+            border_radius: BorderRadius::all(Val::Percent(15.)),
             ..default()
         },
-        BorderRadius::all(Val::Percent(15.)),
         BorderColor::all(BLACK), 
         BackgroundColor(WHITE.into()),
         TextColor(Color::srgb(0.91, 0.61, 0.04).into()),

@@ -3,8 +3,10 @@ use bevy::{ecs::component::Mutable, prelude::*};
 pub fn ui_plugin(app: &mut App){
     // let mut styles = NodeStyleCollection::new();
     // styles.init(Node::default());
-    app.add_systems(Update, (button_dynamics::<BorderColor>, button_dynamics::<BorderRadius>, button_dynamics::<BackgroundColor>, button_dynamics::<UiTransform>));
-    app.add_systems(Update, (button_children_dynamics::<TextColor>, button_children_dynamics::<BorderRadius>, button_children_dynamics::<BackgroundColor>));
+    // app.add_systems(Update, (button_dynamics::<BorderColor>, button_dynamics::<BorderRadius>, button_dynamics::<BackgroundColor>, button_dynamics::<UiTransform>));
+    app.add_systems(Update, (button_dynamics::<BorderColor>, button_dynamics::<BackgroundColor>, button_dynamics::<UiTransform>));
+    // app.add_systems(Update, (button_children_dynamics::<TextColor>, button_children_dynamics::<BorderRadius>, button_children_dynamics::<BackgroundColor>));
+    app.add_systems(Update, (button_children_dynamics::<TextColor>, button_children_dynamics::<BackgroundColor>));
 }
 
 // #[derive(Resource, Deref, DerefMut, Debug)]
